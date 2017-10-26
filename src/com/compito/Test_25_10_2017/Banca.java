@@ -6,6 +6,7 @@ package com.compito.Test_25_10_2017;
  */
 
 import java.io.*;
+import java.text.DecimalFormat;
 
 public class Banca 
 {
@@ -13,10 +14,8 @@ public class Banca
     {
         InputStreamReader input = new InputStreamReader(System.in);
         BufferedReader tastiera = new BufferedReader(input);
-        
-        Integer conto=0,operazione;
-        Float denaro;
-        
+        DecimalFormat dfsaldo= new DecimalFormat("0000.00");
+        Integer conto=0,operazione;Float denaro;
         try 
         {
             do{
@@ -41,7 +40,7 @@ public class Banca
             if(operazione==1)
             {
                do{
-                    System.out.println("Preleva: (MAX="+(cliente1.getSaldo())+")");
+                    System.out.println("Preleva: (MAX="+(dfsaldo.format(cliente1.getSaldo()))+")");
                     denaro=Float.valueOf(tastiera.readLine());
                     }while(denaro>cliente1.getSaldo());
                     cliente1.preleva(denaro);
@@ -59,7 +58,7 @@ public class Banca
                 if(operazione==2)
                 {
                     do{
-                    System.out.println("Deposita: (MAX="+(9999.99-cliente1.getSaldo())+")");
+                    System.out.println("Deposita: (MAX="+dfsaldo.format(9999.99-cliente1.getSaldo())+")");
                     denaro=Float.valueOf(tastiera.readLine());
                     }while(cliente1.getSaldo()+denaro>9999.99);
                     cliente1.versa(denaro);
@@ -107,7 +106,7 @@ public class Banca
             if(operazione==1)
             {
                do{
-                    System.out.println("Preleva: (MAX="+(cliente2.getSaldo())+")");
+                    System.out.println("Preleva: (MAX="+(dfsaldo.format(cliente2.getSaldo()))+")");
                     denaro=Float.valueOf(tastiera.readLine());
                     }while(denaro>cliente2.getSaldo());
                     cliente2.preleva(denaro);
@@ -125,7 +124,7 @@ public class Banca
                 if(operazione==2)
                 {
                     do{
-                    System.out.println("Deposita: (MAX="+(9999.99-cliente2.getSaldo())+")");
+                    System.out.println("Deposita: (MAX="+dfsaldo.format(9999.99-cliente2.getSaldo())+")");
                     denaro=Float.valueOf(tastiera.readLine());
                     }while(cliente2.getSaldo()+denaro>9999.99);
                     cliente2.versa(denaro);
@@ -150,11 +149,11 @@ public class Banca
         //STAMPA ULTIMO MOVIMENTO I SALDI E CONFRONTARE I SALDI E VEDERE IL PIU' RICCO
         System.out.println("CONTO: " +cliente1.getNumConto());
         System.out.println("Ultimo movimento: " + cliente1.getMovimento()+" data: "+cliente1.getData());
-        System.out.println("Saldo: "+cliente1.getSaldo());
-        
+        System.out.println("Saldo: "+dfsaldo.format(cliente1.getSaldo()));
+        System.out.println("*****************************");
         System.out.println("CONTO: " +cliente2.getNumConto());
         System.out.println("Ultimo movimento: " + cliente2.getMovimento()+" data: "+cliente2.getData());
-        System.out.println("Saldo: "+cliente2.getSaldo());
+        System.out.println("Saldo: "+dfsaldo.format(cliente2.getSaldo()));
         
         if(cliente1.getSaldo()>cliente2.getSaldo())
         {
