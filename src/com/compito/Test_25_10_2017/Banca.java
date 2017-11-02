@@ -1,13 +1,10 @@
 package com.compito.Test_25_10_2017;
-
 /**
  *
  * @author Marco
  */
-
 import java.io.*;
 import java.text.DecimalFormat;
-
 public class Banca 
 {
     public static void main(String argv[])
@@ -15,68 +12,96 @@ public class Banca
         InputStreamReader input = new InputStreamReader(System.in);
         BufferedReader tastiera = new BufferedReader(input);
         DecimalFormat dfsaldo= new DecimalFormat("0000.00");
-        Integer conto=0,operazione;Float denaro;
-        try 
+        
+        String conto = null;
+        String data;
+        int operazione;
+        double denaro=0;
+        double fido;
+        double max=0;
+        boolean debito=false;
+        try //Quà digitiamo il numero (string) del codice corrente
         {
             do{
             System.out.print("Digita il num. del conto corrente: ");
-            conto=Integer.valueOf(tastiera.readLine());
-            }while(conto<0||conto>99999999); //il vincolo tbh fa schifo f.b.m. 
+            conto=tastiera.readLine();
+            }while(conto.length()<8);
         } catch (IOException | NumberFormatException e) 
         {
             System.err.println("Conto errato.");
+            System.err.println(e);
             System.exit(1);
         }
-        
         Cliente cliente1 = new Cliente(conto);
-        
         try 
         {
         do{
-            do{
-            System.out.println("Digita 1:Preleva 2:Deposita 3:Exit");
+            do{ // qua scegliamo che operazione fare
+            System.out.println("Digita 1:Preleva 2:Deposita 3:setFido 4:Exit");
             operazione=Integer.valueOf(tastiera.readLine());
-            }while(operazione!=1&&operazione!=2&&operazione!=3);
-            if(operazione==1)
+            }while(operazione!=1&&operazione!=2&&operazione!=3&&operazione!=4);
+            if(operazione==1) //PRELIEVO
             {
-               do{
-                    System.out.println("Preleva: (MAX="+(dfsaldo.format(cliente1.getSaldo()))+")");
-                    denaro=Float.valueOf(tastiera.readLine());
-                    }while(denaro>cliente1.getSaldo());
-                    cliente1.preleva(denaro);
-                    if(denaro!=0.0&&denaro!=0)
+               do{ 
+                    
+                    if(cliente1.getSaldo()<0 && cliente1.getSaldo()==-cliente1.getFido())   //devo fare il controllo // saldo==-fido , significa che se non è uguale 
+                    {                                                                       //(esempio -100 == (-)100) il fido è cambiato e quindi posso prelevare la differenza di fido insomma
+                        System.out.println("Il tuo conto è in debito di "+cliente1.getSaldo()+"");
+                        System.out.println("Non è pssibile prelevare.");
+                        debito=true;
+                    }
+                    else 
+                    {
+                        debito=false;
+                        max=cliente1.getSaldo()+cliente1.getFido(); // utilizzo variabiel comodo max altrimenti il risultato non è corretto.
+                        System.out.println("Preleva: (MAX="+max+")");
+                        denaro=Double.valueOf(tastiera.readLine());
+                    }
+                }while(denaro>max && debito==false); // 1 or 0 = 1 // 1 and 0 = 0 // debito==false perchè se il debito==true esce dal while
+                    if(denaro!=0.0&&denaro!=0&&debito==false) // 0.0/0 per uscire //getsaldo>0 perchè non vorrei mai settare la data se sto' prelevando 0 euro :F
                     {
                         System.out.print("Inserisci Data: ");
-                        cliente1.setData(tastiera.readLine()); //vincoli da aggiornare 
-                        cliente1.setMovimento("Prelievo: " + denaro + "€");
+                        data=tastiera.readLine();
+                        cliente1.preleva(data,denaro); //passo pure la data per settare la dataMovimento,il denaro per impostare il saldo e settare importoMovimento
                         System.out.println("Prelievo eseguito con successo.");
                     }
-                    
             }
             else
             {
                 if(operazione==2)
                 {
                     do{
-                    System.out.println("Deposita: (MAX="+dfsaldo.format(9999.99-cliente1.getSaldo())+")");
-                    denaro=Float.valueOf(tastiera.readLine());
-                    }while(cliente1.getSaldo()+denaro>9999.99);
-                    cliente1.versa(denaro);
+                    System.out.println("Deposita: (MAX="+dfsaldo.format(9999.99-cliente1.getSaldo())+")"); //il saldo deve essere max 9999,99 quindi metto questo vincolo
+                    denaro=Double.valueOf(tastiera.readLine());
+                    }while(cliente1.getSaldo()+denaro>9999.99); // es 10000.00 - non lo deposita
                     if(denaro!=0.0&&denaro!=0)
                     {
                         System.out.print("Inserisci Data: ");
-                        cliente1.setData(tastiera.readLine()); //vincoli da aggiornare 
-                        cliente1.setMovimento("Deposito: " + denaro + "€");
-                        System.out.println("Versamento eseguito con successo.");
-                        
+                        data=tastiera.readLine();
+                        cliente1.versa(data,denaro);
+                        System.out.println("Versamento eseguito con successo.");   
                     }
-                    
+                }
+                else
+                {
+                    if(operazione==3)
+                    {
+                        do{
+                        System.out.println("Inserire soglia di fido");
+                        fido=Double.valueOf(tastiera.readLine());
+                        }while(fido<0);
+                        cliente1.setFido(fido);
+                    }
                 }
             }
-        }while(operazione!=3);
+        }while(operazione!=4);
         
         } catch (IOException | NumberFormatException e) 
-        {}
+        {
+            System.err.println("ERRORE: Qualcosa è andato storto.");
+            System.err.println(e);
+            System.exit(-1);
+        }
         
         
         //CONTO BANCARIO N. 2
@@ -86,8 +111,8 @@ public class Banca
         {
             do{
             System.out.print("Digita il num. del conto corrente: ");
-            conto=Integer.valueOf(tastiera.readLine());
-            }while(conto<0||conto>99999999); //il vincolo tbh fa schifo f.b.m. 
+            conto=tastiera.readLine();
+            }while(conto.length()<8); //il vincolo tbh fa schifo f.b.m. 
         } catch (IOException | NumberFormatException e) 
         {
             System.err.println("Conto errato.");
@@ -100,24 +125,34 @@ public class Banca
         {
         do{
             do{
-            System.out.println("Digita 1:Preleva 2:Deposita 3:Exit");
+            System.out.println("Digita 1:Preleva 2:Deposita 3:setFido 4:Exit");
             operazione=Integer.valueOf(tastiera.readLine());
-            }while(operazione!=1&&operazione!=2&&operazione!=3);
+            }while(operazione!=1&&operazione!=2&&operazione!=3&&operazione!=4);
             if(operazione==1)
             {
-               do{
-                    System.out.println("Preleva: (MAX="+(dfsaldo.format(cliente2.getSaldo()))+")");
-                    denaro=Float.valueOf(tastiera.readLine());
-                    }while(denaro>cliente2.getSaldo());
-                    cliente2.preleva(denaro);
-                    if(denaro!=0.0&&denaro!=0)
-                    {
-                        System.out.print("Inserisci Data: ");
-                        cliente2.setData(tastiera.readLine()); //vincoli da aggiornare 
-                        cliente2.setMovimento("Prelievo: " + denaro + "€");
-                        System.out.println("Prelievo eseguito con successo.");
-                    }
+               do{  
                     
+                    if(cliente1.getSaldo()<0 && cliente1.getSaldo()==-cliente1.getFido())   //devo fare il controllo // saldo==-fido , significa che se non è uguale 
+                    {                                                                       //(esempio -100 == (-)100) il fido è cambiato e quindi posso prelevare la differenza di fido insomma
+                        System.out.println("Il tuo conto è in debito di "+cliente2.getSaldo()+"");
+                        System.out.println("Non è pssibile prelevare.");
+                        debito=true;
+                    }
+                    else
+                    {
+                        debito=false;
+                        max=cliente2.getSaldo()+cliente2.getFido();
+                        System.out.println("Preleva: (MAX="+max+")");
+                        denaro=Double.valueOf(tastiera.readLine());
+                    }
+                }while(denaro>max && debito==false); // 1 or 0 = 1
+                if(denaro!=0.0&&denaro!=0&&debito==false)
+                {
+                    System.out.print("Inserisci Data: ");
+                    data=tastiera.readLine();
+                    cliente2.preleva(data,denaro);
+                    System.out.println("Prelievo eseguito con successo.");
+                }
             }
             else
             {
@@ -125,35 +160,40 @@ public class Banca
                 {
                     do{
                     System.out.println("Deposita: (MAX="+dfsaldo.format(9999.99-cliente2.getSaldo())+")");
-                    denaro=Float.valueOf(tastiera.readLine());
+                    denaro=Double.valueOf(tastiera.readLine());
                     }while(cliente2.getSaldo()+denaro>9999.99);
-                    cliente2.versa(denaro);
                     if(denaro!=0.0&&denaro!=0)
                     {
                         System.out.print("Inserisci Data: ");
-                        cliente2.setData(tastiera.readLine()); //vincoli da aggiornare 
-                        cliente2.setMovimento("Deposito: " + denaro + "€");
-                        System.out.println("Versamento eseguito con successo.");
-                        
+                        data=tastiera.readLine();
+                        cliente2.versa(data,denaro);
+                        System.out.println("Versamento eseguito con successo.");   
                     }
-                    
+                }
+                else
+                {
+                    if(operazione==3)
+                    {
+                        do{
+                        System.out.println("Inserire soglia di fido");
+                        fido=Double.valueOf(tastiera.readLine());
+                        }while(fido<0);
+                        cliente2.setFido(fido);
+                    }
                 }
             }
-        }while(operazione!=3);
+        }while(operazione!=4);
         
         } catch (IOException | NumberFormatException e) 
-        {}
+        {
+            System.err.println("ERRORE: Qualcosa è andato storto.");
+            System.exit(-1);
+        }
         
-        
-        
-        //STAMPA ULTIMO MOVIMENTO I SALDI E CONFRONTARE I SALDI E VEDERE IL PIU' RICCO
-        System.out.println("CONTO: " +cliente1.getNumConto());
-        System.out.println("Ultimo movimento: " + cliente1.getMovimento()+" data: "+cliente1.getData());
-        System.out.println("Saldo: "+dfsaldo.format(cliente1.getSaldo()));
-        System.out.println("*****************************");
-        System.out.println("CONTO: " +cliente2.getNumConto());
-        System.out.println("Ultimo movimento: " + cliente2.getMovimento()+" data: "+cliente2.getData());
-        System.out.println("Saldo: "+dfsaldo.format(cliente2.getSaldo()));
+        cliente1.stampaSaldo();
+        cliente1.stampaUltimoMovimento();
+        cliente2.stampaSaldo();
+        cliente2.stampaUltimoMovimento();
         
         if(cliente1.getSaldo()>cliente2.getSaldo())
         {
