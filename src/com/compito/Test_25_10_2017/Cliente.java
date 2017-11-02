@@ -23,6 +23,7 @@ public class Cliente
         this.importoMovimento=importoMovimento;
         this.dataMovimento=dataMovimento;
         saldo+=importoMovimento;
+        
     }
     public void preleva(String dataMovimento,double importoMovimento)
     {

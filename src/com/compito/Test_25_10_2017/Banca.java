@@ -7,7 +7,7 @@ import java.io.*;
 import java.text.DecimalFormat;
 public class Banca 
 {
-    public static void main(String argv[])
+    public void main(String argv[])
     {
         InputStreamReader input = new InputStreamReader(System.in);
         BufferedReader tastiera = new BufferedReader(input);
@@ -54,7 +54,7 @@ public class Banca
                     {
                         debito=false;
                         max=cliente1.getSaldo()+cliente1.getFido(); // utilizzo variabiel comodo max altrimenti il risultato non è corretto.
-                        System.out.println("Preleva: (MAX="+max+")");
+                        System.out.println("Preleva: (MAX="+dfsaldo.format(max)+")");
                         denaro=Double.valueOf(tastiera.readLine());
                     }
                 }while(denaro>max && debito==false); // 1 or 0 = 1 // 1 and 0 = 0 // debito==false perchè se il debito==true esce dal while
@@ -142,7 +142,7 @@ public class Banca
                     {
                         debito=false;
                         max=cliente2.getSaldo()+cliente2.getFido();
-                        System.out.println("Preleva: (MAX="+max+")");
+                        System.out.println("Preleva: (MAX="+dfsaldo.format(max)+")");
                         denaro=Double.valueOf(tastiera.readLine());
                     }
                 }while(denaro>max && debito==false); // 1 or 0 = 1
